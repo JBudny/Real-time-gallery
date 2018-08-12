@@ -10,7 +10,7 @@ app.get('/', (req, res) => {res.sendFile(__dirname + '/views/index.html');})
 app.use('/static/', express.static(__dirname + '/public/css'))
 app.use('/static/', express.static(__dirname + '/public/assets/images'))
 
-http.listen(3003, function(){
+http.listen(3000, function(){
   console.log('listening on *:3000');
 });
 
@@ -19,10 +19,15 @@ fs.readdir(dir, (err, files) => {
 });
 
 let createGallery = (socket) => {
-  let codeToInsert = '<div class="card"><figure><img src="static/100x100.png" alt="100x100 image"><figcaption>100x100 image</figcaption></figure></div>';
+  let imageList = [];
+  fs.readdir(dir, (err, files) => {
+    files.forEach(file => {
+      imageList.push(file);
+    });
+  })
   io.sockets.on('connection', function (socket) {
     socket.emit('init', {
-        my: codeToInsert
+        my: imageList
     });
   });
 
