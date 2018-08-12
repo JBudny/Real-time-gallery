@@ -23,8 +23,11 @@
 <script>
 const socket = io();
 socket.on('init', function(data) {
-    console.log(data.my);
-    $(".gallery").append(data.my);
+    let imageList = data.my;
+    for (let i=0;i<imageList.length;i++)
+      {
+        $(".gallery").append('<div class="card"><figure><img src="static/'+imageList[i]+'" alt=""><figcaption>'+imageList[i]+'</figcaption></figure></div>');
+      }
 });
 </script>
 </body>
