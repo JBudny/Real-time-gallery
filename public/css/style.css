@@ -5,6 +5,25 @@
   font-family: sans-serif;
 }
 
+.pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-area: pagination;
+}
+
+.pagination>a {
+  font-size: 20px;
+  line-height: 1em;
+  padding: 5px;
+  margin:2px;
+}
+
+.pagination>a:hover {
+  background-color: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
 .page-header, .page-footer {
   display: flex;
   justify-content: center;
@@ -37,8 +56,8 @@
 .wrapper {
   height: 100%;
   display: grid;
-  grid-template-rows: 70px 1fr 70px;
-  grid-template-areas: "header" "gallery" "footer";
+  grid-template-rows: 70px 1fr 70px 70px;
+  grid-template-areas: "header" "gallery" "pagination" "footer";
 }
 
 @media only screen and (max-width:768px) {

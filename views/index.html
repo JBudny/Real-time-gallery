@@ -18,6 +18,7 @@
     </div>
     <div class="gallery">
     </div>
+    <div class="pagination"></div>
     <div class="page-footer">
       <p> 2018 JBudny </p>
     </div>
@@ -25,12 +26,44 @@
   <script>
     const socket = io();
     socket.on('init', function(data) {
-      console.log("jest: " + data.nrOfImages + " zdjęć, czyli " + data.nrOfPages + " stron");
-      let imageList = data.imageList;
-      for (let i = 0; i < imageList.length; i++) {
-        $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + imageList[i] + '</figcaption></figure>');
-      }
+      createPagination(data);
+      showGalleryPage(data);
     });
+
+    let showGalleryPage = (data) => {}
+
+    let createPagination = (data) => {
+      let imageList = data.imageList;
+      $(".pagination").append('<a href="#"><p>&laquo;</p></a>');
+      for (let i = 1; i <= data.nrOfPages; i++) {
+        $(".pagination").append('<a class="pageNr" aria-label="page ' + i + '" href="#" id="p' + i + '"><p>' + i + '</p></a>');
+      }
+      $(".pagination").append('<a href="#"><p>&raquo;</p></a>');
+
+      $('.pageNr').click(function(e) {
+        let id = e.currentTarget.attributes.id.textContent;
+        let page = id.substring(1, 2);
+
+        $('.gallery').find('.card').each(function() {
+          $(this).remove();
+        });
+
+        let i = (page * 10) - 10;
+        let c = 0;
+        while (c < 10) {
+          if (i < data.nrOfImages) {
+            $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + imageList[i] + '</figcaption></figure>');
+            //console.log('i:'+i);console.log('c:'+c);
+            i++;
+            c++;
+          } else {
+            c = 10;
+          }
+        }
+
+        return false;
+      });
+    }
   </script>
 </body>
 

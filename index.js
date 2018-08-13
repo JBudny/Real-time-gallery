@@ -17,8 +17,6 @@ http.listen(3000, function() {
   console.log('listening on *:3000');
 });
 
-fs.readdir(dir, (err, files) => {});
-
 let createGallery = (socket) => {
   let imageList = [];
   let nrOfImages = 0;
@@ -29,7 +27,6 @@ let createGallery = (socket) => {
     });
     nrOfImages = files.length;
     nrOfPages = Math.ceil(nrOfImages / 10);
-    console.log("jest: " + nrOfImages + " zdjęć, czyli " + nrOfPages + " stron");
   })
   io.sockets.on('connection', function(socket) {
     socket.emit('init', {
