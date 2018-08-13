@@ -1,11 +1,14 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat:500);
 * {
   margin: 0;
   padding: 0;
-  font-family: monospace;
+  font-family: sans-serif;
 }
 
 .page-header, .page-footer {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 30px;
   line-height: 2em;
   color: white;
@@ -17,20 +20,24 @@
 }
 
 .page-footer {
-  font-size: 15px;
   grid-area: footer;
+  font-size: 15px;
 }
 
 .gallery {
+  width: 80%;
+  margin: 0 auto;
   grid-area: gallery;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: repeat(2, 200px);
+  grid-template-columns: repeat(5, 1fr);
   grid-template-areas: "card card card card";
 }
 
 .wrapper {
+  height: 100%;
   display: grid;
-  grid-template-rows: 10% 1fr 10%;
+  grid-template-rows: 70px 1fr 70px;
   grid-template-areas: "header" "gallery" "footer";
 }
 
@@ -39,4 +46,30 @@
     grid-template-columns: 1fr 1fr;
     grid-template-areas: "card card";
   }
+}
+
+.card {
+  overflow: hidden;
+  margin: 10px;
+  box-shadow: 0.3rem 0.4rem 0.4rem rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+  position: relative;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.card-image {
+  width: 100%;
+}
+
+.card-caption {
+  position: absolute;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  line-height: 1.5em;
 }
