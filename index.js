@@ -17,22 +17,25 @@ http.listen(3000, function() {
   console.log('listening on *:3000');
 });
 
-fs.readdir(dir, (err, files) => {
-  let nrOfImages = files.length;
-  let nrOfPages = Math.ceil(nrOfImages/10);
-  console.log("jest: "+nrOfImages+" zdjęć, czyli "+nrOfPages+" stron");
-});
+fs.readdir(dir, (err, files) => {});
 
 let createGallery = (socket) => {
   let imageList = [];
+  let nrOfImages = 0;
+  let nrOfPages = 0;
   fs.readdir(dir, (err, files) => {
     files.forEach(file => {
       imageList.push(file);
     });
+    nrOfImages = files.length;
+    nrOfPages = Math.ceil(nrOfImages / 10);
+    console.log("jest: " + nrOfImages + " zdjęć, czyli " + nrOfPages + " stron");
   })
   io.sockets.on('connection', function(socket) {
     socket.emit('init', {
-      my: imageList
+      imageList: imageList,
+      nrOfPages: nrOfPages,
+      nrOfImages: nrOfImages
     });
   });
 }
