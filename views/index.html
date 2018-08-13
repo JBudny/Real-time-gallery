@@ -13,23 +13,24 @@
 
 <body>
   <div class="wrapper">
-    <div class="page-header"><p>Grid-gallery</p></div>
+    <div class="page-header">
+      <p>Grid-gallery</p>
+    </div>
     <div class="gallery">
     </div>
     <div class="page-footer">
       <p> 2018 JBudny </p>
     </div>
   </div>
-<script>
-const socket = io();
-socket.on('init', function(data) {
-    let imageList = data.my;
-    for (let i=0;i<imageList.length;i++)
-      {
-        $(".gallery").append('<figure class="card"><img class="card-image" src="static/'+imageList[i]+'" alt="Image: '+i+'"><figcaption class="card-caption">'+imageList[i]+'</figcaption></figure>');
+  <script>
+    const socket = io();
+    socket.on('init', function(data) {
+      let imageList = data.my;
+      for (let i = 0; i < imageList.length; i++) {
+        $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + imageList[i] + '</figcaption></figure>');
       }
-});
-</script>
+    });
+  </script>
 </body>
 
 </html>

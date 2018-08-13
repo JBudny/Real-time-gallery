@@ -5,17 +5,22 @@ const dir = './public/assets/images';
 const $ = require('jQuery');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const imagesOnPage = 10;
 
-app.get('/', (req, res) => {res.sendFile(__dirname + '/views/index.html');})
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/views/index.html');
+})
 app.use('/static/', express.static(__dirname + '/public/css'))
 app.use('/static/', express.static(__dirname + '/public/assets/images'))
 
-http.listen(8081, function(){
+http.listen(3000, function() {
   console.log('listening on *:3000');
 });
 
 fs.readdir(dir, (err, files) => {
-  console.log(files.length);
+  let nrOfImages = files.length;
+  let nrOfPages = Math.ceil(nrOfImages/10);
+  console.log("jest: "+nrOfImages+" zdjęć, czyli "+nrOfPages+" stron");
 });
 
 let createGallery = (socket) => {
@@ -25,13 +30,11 @@ let createGallery = (socket) => {
       imageList.push(file);
     });
   })
-  io.sockets.on('connection', function (socket) {
+  io.sockets.on('connection', function(socket) {
     socket.emit('init', {
-        my: imageList
+      my: imageList
     });
   });
-
-
 }
 
 createGallery();
