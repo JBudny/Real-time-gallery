@@ -6,14 +6,14 @@ const $ = require('jQuery');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const imagesOnPage = 10;
-const port = 3001;
+const port = 3000;
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 })
 app.use('/static/', express.static(__dirname + '/public/css'))
-.use('/static/', express.static(__dirname + '/public/assets/images'))
-.use('/js/', express.static(__dirname + '/src/scripts'))
+  .use('/static/', express.static(__dirname + '/public/assets/images'))
+  .use('/js/', express.static(__dirname + '/src/scripts'))
 
 http.listen(port, function() {
   console.log('listening on *:3000');

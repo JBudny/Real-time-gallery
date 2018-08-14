@@ -3,7 +3,7 @@ socket.on('init', function(data) {
   const galleryData = getData(data);
   let currentPage = 1;
   let visiblePages = generatePages(currentPage, galleryData);
-  paginationInit(galleryData.nrOfPages);
+  paginationInit(galleryData);
   showPages(visiblePages);
   activePageToggle(currentPage);
   showGalleryOfSelectedPage(currentPage, galleryData);
@@ -18,11 +18,12 @@ let getData = (data) => {
   };
 }
 
-let paginationInit = (nrOfPages) => {
+let paginationInit = (galleryData) => {
   $(".pagination").append('<a href="#"><p>&laquo; Previous</p></a>');
   $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '"><p>' + 1 + '</p></a>');
+  $(".pagination").append('<div class="pagination-dots"</div>');
   $(".pagination").append('<div class="pagination-interactive"</div>');
-  $(".pagination").append('<p>of ' + nrOfPages + '</p>');
+  $(".pagination").append('<p>of ' + galleryData.nrOfPages + '</p>');
   $(".pagination").append('<a href="#"><p>Next &raquo;</p></a>');
 }
 
@@ -71,22 +72,30 @@ let showPages = (visiblePages) => {
   $('.pagination-interactive').find('.interactiveElement').each(function() {
     $(this).remove();
   });
-  if (visiblePages.length > 2) {
-    $(".pagination-interactive").append('<p class="interactiveElement">...</p>');
-  }
   for (let i = 0; i <= visiblePages.length - 1; i++) {
     $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="p' + visiblePages[i] + '"><p>' + visiblePages[i] + '</p></a>');
   }
 }
 
+let addDots = (visiblePages) => {
+  $('.pagination-dots').find('.interactiveElement').each(function() {
+    $(this).remove();
+  });
+  let id = $(".pagination-active").attr('id').substring(1, 2);
+  if (id-1>3) {
+    $(".pagination-dots").append('<p class="interactiveElement">...</p>');
+  }
+}
+
 let switchPage = (galleryData) => {
-  $('.pageNr').click(function(e) {
+  $(document).on('click', '.pageNr', function(e) {
     let id = e.currentTarget.attributes.id.textContent;
     let currentPage = id.substring(1, 2);
     let visiblePages = generatePages(currentPage, galleryData);
     clearGallery();
     showPages(visiblePages);
     activePageToggle(currentPage);
+    addDots(visiblePages);
     showGalleryOfSelectedPage(currentPage, galleryData);
     return false;
   });
