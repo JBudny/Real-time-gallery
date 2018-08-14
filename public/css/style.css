@@ -4,33 +4,17 @@
   padding: 0;
   font-family: sans-serif;
   box-sizing: border-box;
+  color: #dedede;
 }
 
-.pagination,.pagination-interactive {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  grid-area: pagination;
-}
-
-.pagination>a,.pagination>.pagination-interactive>a {
-  font-size: 20px;
-  line-height: 1em;
-  padding: 5px;
-  margin: 2px;
-  border: 1px solid white;
-}
-
-.pagination>a:hover, .pagination-interactive>a:hover {
-  background-color: rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  border: 1px solid black;
-}
-
-.pagination-active {
-  background-color: rgba(0, 0, 0, 0.25);
-  color: red;
-  border: 1px solid black;
+.wrapper {
+  height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: 70px 1fr 70px 70px;
+  grid-template-areas: "header" "gallery" "pagination" "footer";
+  background-color: #515151;
 }
 
 .page-header, .page-footer {
@@ -40,16 +24,11 @@
   font-size: 30px;
   line-height: 2em;
   color: white;
-  background-color: black;
+  background-color: #353535;
 }
 
 .page-header {
   grid-area: header;
-}
-
-.page-footer {
-  grid-area: footer;
-  font-size: 15px;
 }
 
 .gallery {
@@ -62,18 +41,40 @@
   grid-template-areas: "card card card card";
 }
 
-.wrapper {
-  height: 100vh;
-  display: grid;
-  grid-template-rows: 70px 1fr 70px 70px;
-  grid-template-areas: "header" "gallery" "pagination" "footer";
+.pagination, .pagination-interactive {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-area: pagination;
 }
 
-@media only screen and (max-width:768px) {
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "card card";
-  }
+.pagination>a, .pagination>.pagination-interactive>a {
+  background-color: #282828;
+  font-size: 20px;
+  line-height: 1em;
+  padding: 5px;
+  margin: 2px;
+  border: 1px solid white;
+  text-decoration: none;
+  border: 1px solid black;
+}
+
+.pagination>a:hover, .pagination-interactive>a:hover {
+  cursor: pointer;
+  color: black;
+  border: 1px solid black;
+  background-color: white;
+}
+
+.pagination-active {
+  background-color: rgba(0, 0, 0, 0.25);
+  color: black;
+  border: 1px solid black;
+}
+
+.page-footer {
+  grid-area: footer;
+  font-size: 15px;
 }
 
 .card {
@@ -83,6 +84,7 @@
   transition: 0.3s;
   position: relative;
   cursor: pointer;
+  background-color: #353535;
 }
 
 .card:hover {
@@ -92,12 +94,24 @@
 
 .card-image {
   width: 100%;
+  margin: 5px;
 }
 
 .card-caption {
+  text-align: center;
   position: absolute;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.3);
   width: 100%;
   line-height: 1.5em;
+}
+
+@media only screen and (max-width:768px) {
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "card card";
+  }
+  .wrapper {
+    height:100%;
+  }
 }
