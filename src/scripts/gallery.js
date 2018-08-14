@@ -19,12 +19,12 @@ let getData = (data) => {
 }
 
 let paginationInit = (galleryData) => {
-  $(".pagination").append('<a href="#"><p>&laquo; Previous</p></a>');
-  $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '"><p>' + 1 + '</p></a>');
+  $(".pagination").append('<a href="#">&laquo; Previous</a>');
+  $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '">' + 1 + '</a>');
   $(".pagination").append('<div class="pagination-dots"</div>');
   $(".pagination").append('<div class="pagination-interactive"</div>');
   $(".pagination").append('<p>of ' + galleryData.nrOfPages + '</p>');
-  $(".pagination").append('<a href="#"><p>Next &raquo;</p></a>');
+  $(".pagination").append('<a href="#">Next &raquo;</a>');
 }
 
 let clearGallery = () => {
@@ -73,7 +73,7 @@ let showPages = (visiblePages) => {
     $(this).remove();
   });
   for (let i = 0; i <= visiblePages.length - 1; i++) {
-    $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="p' + visiblePages[i] + '"><p>' + visiblePages[i] + '</p></a>');
+    $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="p' + visiblePages[i] + '">' + visiblePages[i] + '</a>');
   }
 }
 
