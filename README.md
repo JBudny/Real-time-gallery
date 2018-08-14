@@ -1,4 +1,4 @@
-# Grid-gallery
+# Gallery
 
 Image gallery with CSS Grid, flexbox and JS
 
