@@ -32,7 +32,7 @@ let createGallery = (socket) => {
     socket.emit('init', {
       imageList: imageList,
       nrOfPages: nrOfPages,
-      nrOfImages: nrOfImages
+      nrOfImages: nrOfImages,
     });
   });
 }

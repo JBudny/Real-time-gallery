@@ -27,39 +27,84 @@
     const socket = io();
     socket.on('init', function(data) {
       createPagination(data);
-      showGalleryPage(data);
     });
-
-    let showGalleryPage = (data) => {}
 
     let createPagination = (data) => {
       let imageList = data.imageList;
-      $(".pagination").append('<a href="#"><p>&laquo;</p></a>');
-      for (let i = 1; i <= data.nrOfPages; i++) {
-        $(".pagination").append('<a class="pageNr" aria-label="page ' + i + '" href="#" id="p' + i + '"><p>' + i + '</p></a>');
+      let nrOfPages = data.nrOfPages;
+      let nrOfImages = data.nrOfImages;
+
+      let paginationFixedMenu = () => {
+        $(".pagination").append('<a href="#"><p>&laquo; Previous</p></a>');
+        $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '"><p>' + 1 + '</p></a>');
+        $(".pagination").append('<div class="pagination-interactive"</div>');
+        $(".pagination").append('<p>of</p><a class="pageNr" aria-label="page ' + nrOfPages + '" href="#" id="p' + nrOfPages + '"><p>' + nrOfPages + '</p></a>');
+        $(".pagination").append('<a href="#"><p>Next &raquo;</p></a>');
       }
-      $(".pagination").append('<a href="#"><p>&raquo;</p></a>');
+
+      paginationFixedMenu();
 
       $('.pageNr').click(function(e) {
         let id = e.currentTarget.attributes.id.textContent;
-        let page = id.substring(1, 2);
+        let currentPage = id.substring(1, 2);
 
-        $('.gallery').find('.card').each(function() {
-          $(this).remove();
-        });
+        let clearGallery = () => {
+          $('.gallery').find('.card').each(function() {
+            $(this).remove();
+          });
+        }
 
-        let i = (page * 10) - 10;
-        let c = 0;
-        while (c < 10) {
-          if (i < data.nrOfImages) {
-            $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + imageList[i] + '</figcaption></figure>');
-            //console.log('i:'+i);console.log('c:'+c);
-            i++;
-            c++;
-          } else {
-            c = 10;
+        let showGallery = () => {
+          let i = (currentPage * 10) - 10;
+          let c = 0;
+          while (c < 10) {
+            if (i < nrOfImages) {
+              $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + imageList[i] + '</figcaption></figure>');
+              i++;
+              c++;
+            } else {
+              c = 10;
+            }
           }
         }
+
+        let togglePaginationActive = () => {
+          $('.pagination').find('a').each(function() {
+            $(this).removeClass('pagination-active');
+          })
+          $('#' + id).toggleClass('pagination-active');
+        }
+
+        let makeNumbers = (currentPage, visiblePages) => {
+          let i = 0;
+          let j = currentPage - 2;
+          let k = Number(currentPage) + 2;
+          for (j; j <= k; j++) {
+            if (j > 1 && j <= data.nrOfPages) {
+              visiblePages[i] = j;
+              i++;
+            }
+          }
+        }
+
+        let showPages = () => {
+          let visiblePages = [];
+          makeNumbers(currentPage, visiblePages);
+          $('.pagination-interactive').find('.interactiveElement').each(function() {
+            $(this).remove();
+          });
+          if (visiblePages.length > 2) {
+            $(".pagination-interactive").append('<p class="interactiveElement">...</p>');
+          }
+          for (let i = 0; i <= visiblePages.length - 1; i++) {
+            $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="p' + visiblePages[i] + '"><p>' + visiblePages[i] + '</p></a>');
+          }
+        }
+
+        togglePaginationActive();
+        clearGallery();
+        showGallery();
+        showPages();
 
         return false;
       });
