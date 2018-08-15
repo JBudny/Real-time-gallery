@@ -62,19 +62,33 @@ let generatePages = (currentPage, galleryData) => {
   let visiblePages = [];
   if (currentPage < 4) {
     j = 2;
-    for (j; j <= 5; j++) {
-      visiblePages[i] = j;
-      i++
+    if (galleryData.nrOfPages >= 5) {
+      console.log("test1-1")
+      for (j; j <= 5; j++) {
+        visiblePages[i] = j;
+        i++
+      }
+      console.log(visiblePages);
+    } else {
+      for (j; j <= galleryData.nrOfPages; j++) {
+        visiblePages[i] = j;
+        i++
+      }
+      console.log("test1-2")
     }
     return visiblePages;
   } else if (currentPage > galleryData.nrOfPages - 3) {
-    j = galleryData.nrOfPages - 4;
+    console.log("test2");
+    if (galleryData.nrOfPages>5){
+      j = galleryData.nrOfPages - 4;
+    } else {j=2;}
     for (j; j <= galleryData.nrOfPages; j++) {
       visiblePages[i] = j;
       i++
     }
     return visiblePages;
   } else {
+    console.log("test3");
     for (j; j <= k; j++) {
       if (j > 1 && j <= galleryData.nrOfPages) {
         visiblePages[i] = j;
@@ -95,12 +109,12 @@ let showPages = (visiblePages) => {
   }
 }
 
-let addDots = (visiblePages) => {
+let addDots = (visiblePages,galleryData) => {
   $('.pagination-dots').find('.interactiveElement').each(function() {
     $(this).remove();
   });
   let id = $(".pagination-active").attr('id').substring(1, 2);
-  if (id - 1 > 3) {
+  if (id - 1 > 3 && galleryData.nrOfPages>5) {
     $(".pagination-dots").append('<p class="interactiveElement">...</p>');
   }
 }
@@ -115,36 +129,37 @@ let switchPage = (galleryData) => {
 }
 
 let nextPrevious = (currentPage, galleryData) => {
-    $(document).on('click', '.pagination-previous', function() {
-          if (currentPage > 1) {
-            currentPage = currentPage - 1;
-            refreshAll(currentPage, galleryData);
-            return false;
-          } else {
-              if (currentPage == 1) {
-                currentPage = galleryData.nrOfPages
-                refreshAll(currentPage, galleryData);
-              }
-          }
-        }); $(document).on('click', '.pagination-next', function() {
-        if (currentPage < galleryData.nrOfPages) {
-          currentPage = currentPage + 1;
-          refreshAll(currentPage, galleryData);
-          return false;
-        } else {
-          if (currentPage == galleryData.nrOfPages) {
-            currentPage = 1
-            refreshAll(currentPage, galleryData);
-          }
-        }
-      });
+  $(document).on('click', '.pagination-previous', function() {
+    if (currentPage > 1) {
+      currentPage = currentPage - 1;
+      refreshAll(currentPage, galleryData);
+      return false;
+    } else {
+      if (currentPage == 1) {
+        currentPage = galleryData.nrOfPages
+        refreshAll(currentPage, galleryData);
+      }
     }
+  });
+  $(document).on('click', '.pagination-next', function() {
+    if (currentPage < galleryData.nrOfPages) {
+      currentPage = currentPage + 1;
+      refreshAll(currentPage, galleryData);
+      return false;
+    } else {
+      if (currentPage == galleryData.nrOfPages) {
+        currentPage = 1
+        refreshAll(currentPage, galleryData);
+      }
+    }
+  });
+}
 
-    let refreshAll = (currentPage, galleryData, ) => {
-      let visiblePages = generatePages(currentPage, galleryData);
-      clearGallery();
-      showPages(visiblePages);
-      activePageToggle(currentPage);
-      addDots(visiblePages);
-      showGalleryOfSelectedPage(currentPage, galleryData);
-    }
+let refreshAll = (currentPage, galleryData, ) => {
+  let visiblePages = generatePages(currentPage, galleryData);
+  clearGallery();
+  showPages(visiblePages);
+  activePageToggle(currentPage);
+  addDots(visiblePages,galleryData);
+  showGalleryOfSelectedPage(currentPage, galleryData);
+}
