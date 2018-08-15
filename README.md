@@ -3,7 +3,7 @@
 Image gallery with CSS Grid, flexbox and jQuery.
 
 Responsive image gallery that can load images from server,
-divine them into the subpages and serve
+divide them into the subpages and serve
 fully-functional pagination menu.
 
 ## Getting Started
