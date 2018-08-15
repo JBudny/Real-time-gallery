@@ -1,6 +1,10 @@
 # Gallery
 
-Image gallery with CSS Grid, flexbox and JS
+Image gallery with CSS Grid, flexbox and jQuery.
+
+Responsive image gallery that can load images from server,
+divine them into the subpages and serve
+fully-functional pagination menu.
 
 ## Getting Started
 
