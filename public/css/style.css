@@ -117,6 +117,17 @@
   font-size: 15px;
 }
 
+.page-footer>a {
+  margin-left:5px;
+  color: #dedede;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.page-footer>a:hover{
+  color: white;
+}
+
 @media only screen and (max-width:768px) {
   .gallery {
     display: flex;
