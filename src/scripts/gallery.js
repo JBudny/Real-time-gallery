@@ -8,6 +8,7 @@ socket.on('init', function(data) {
   activePageToggle(currentPage);
   showGalleryOfSelectedPage(currentPage, galleryData);
   switchPage(galleryData);
+  nextPrevious(currentPage, galleryData);
 });
 
 let getData = (data) => {
@@ -19,12 +20,12 @@ let getData = (data) => {
 }
 
 let paginationInit = (galleryData) => {
-  $(".pagination").append('<a href="#">&laquo; Previous</a>');
+  $(".pagination").append('<a href="#" class="pagination-previous">&laquo; Previous</a>');
   $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '">' + 1 + '</a>');
   $(".pagination").append('<div class="pagination-dots"</div>');
   $(".pagination").append('<div class="pagination-interactive"</div>');
   $(".pagination").append('<p>of ' + galleryData.nrOfPages + '</p>');
-  $(".pagination").append('<a href="#">Next &raquo;</a>');
+  $(".pagination").append('<a href="#" class="pagination-next">Next &raquo;</a>');
 }
 
 let clearGallery = () => {
@@ -108,12 +109,42 @@ let switchPage = (galleryData) => {
   $(document).on('click', '.pageNr', function(e) {
     let id = e.currentTarget.attributes.id.textContent;
     let currentPage = id.substring(1, 2);
-    let visiblePages = generatePages(currentPage, galleryData);
-    clearGallery();
-    showPages(visiblePages);
-    activePageToggle(currentPage);
-    addDots(visiblePages);
-    showGalleryOfSelectedPage(currentPage, galleryData);
+    refreshAll(currentPage, galleryData);
     return false;
   });
 }
+
+let nextPrevious = (currentPage, galleryData) => {
+    $(document).on('click', '.pagination-previous', function() {
+          if (currentPage > 1) {
+            currentPage = currentPage - 1;
+            refreshAll(currentPage, galleryData);
+            return false;
+          } else {
+              if (currentPage == 1) {
+                currentPage = galleryData.nrOfPages
+                refreshAll(currentPage, galleryData);
+              }
+          }
+        }); $(document).on('click', '.pagination-next', function() {
+        if (currentPage < galleryData.nrOfPages) {
+          currentPage = currentPage + 1;
+          refreshAll(currentPage, galleryData);
+          return false;
+        } else {
+          if (currentPage == galleryData.nrOfPages) {
+            currentPage = 1
+            refreshAll(currentPage, galleryData);
+          }
+        }
+      });
+    }
+
+    let refreshAll = (currentPage, galleryData, ) => {
+      let visiblePages = generatePages(currentPage, galleryData);
+      clearGallery();
+      showPages(visiblePages);
+      activePageToggle(currentPage);
+      addDots(visiblePages);
+      showGalleryOfSelectedPage(currentPage, galleryData);
+    }
