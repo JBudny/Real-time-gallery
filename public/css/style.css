@@ -30,6 +30,12 @@
   line-height: 2em;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .gallery {
   grid-area: gallery;
   width: 90%;
@@ -113,11 +119,14 @@
 
 @media only screen and (max-width:768px) {
   .gallery {
-  grid-template-rows: repeat(10, 200px);
+    display: flex;
+    flex-direction:column;/*
+    grid-template-rows: repeat(10, 200px);
     grid-template-columns: 1fr;
-    grid-template-areas: "card";
+    grid-template-areas: "card";*/
   }
   .wrapper {
     height: 100%;
+    width: 100vw;
   }
 }
