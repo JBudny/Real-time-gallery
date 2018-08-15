@@ -59,14 +59,31 @@ let generatePages = (currentPage, galleryData) => {
   let j = currentPage - 2;
   let k = Number(currentPage) + 2;
   let visiblePages = [];
-  for (j; j <= k; j++) {
-    if (j > 1 && j <= galleryData.nrOfPages) {
+  if (currentPage < 4) {
+    j = 2;
+    for (j; j <= 5; j++) {
       visiblePages[i] = j;
-      i++;
+      i++
     }
+    return visiblePages;
+  } else if (currentPage > galleryData.nrOfPages - 3) {
+    j = galleryData.nrOfPages - 4;
+    for (j; j <= galleryData.nrOfPages; j++) {
+      visiblePages[i] = j;
+      i++
+    }
+    return visiblePages;
+  } else {
+    for (j; j <= k; j++) {
+      if (j > 1 && j <= galleryData.nrOfPages) {
+        visiblePages[i] = j;
+        i++;
+      }
+    }
+    return visiblePages;
   }
-  return visiblePages;
 }
+
 
 let showPages = (visiblePages) => {
   $('.pagination-interactive').find('.interactiveElement').each(function() {
@@ -82,7 +99,7 @@ let addDots = (visiblePages) => {
     $(this).remove();
   });
   let id = $(".pagination-active").attr('id').substring(1, 2);
-  if (id-1>3) {
+  if (id - 1 > 3) {
     $(".pagination-dots").append('<p class="interactiveElement">...</p>');
   }
 }
