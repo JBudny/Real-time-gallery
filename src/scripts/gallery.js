@@ -7,8 +7,7 @@ socket.on('init', function(data) {
   showPages(visiblePages);
   activePageToggle(currentPage);
   showGalleryOfSelectedPage(currentPage, galleryData);
-  switchPage(galleryData);
-  nextPrevious(currentPage, galleryData);
+  switchPage(galleryData, currentPage);
 });
 
 let getData = (data) => {
@@ -63,32 +62,29 @@ let generatePages = (currentPage, galleryData) => {
   if (currentPage < 4) {
     j = 2;
     if (galleryData.nrOfPages >= 5) {
-      console.log("test1-1")
       for (j; j <= 5; j++) {
         visiblePages[i] = j;
         i++
       }
-      console.log(visiblePages);
     } else {
       for (j; j <= galleryData.nrOfPages; j++) {
         visiblePages[i] = j;
         i++
       }
-      console.log("test1-2")
     }
     return visiblePages;
   } else if (currentPage > galleryData.nrOfPages - 3) {
-    console.log("test2");
-    if (galleryData.nrOfPages>5){
+    if (galleryData.nrOfPages > 5) {
       j = galleryData.nrOfPages - 4;
-    } else {j=2;}
+    } else {
+      j = 2;
+    }
     for (j; j <= galleryData.nrOfPages; j++) {
       visiblePages[i] = j;
       i++
     }
     return visiblePages;
   } else {
-    console.log("test3");
     for (j; j <= k; j++) {
       if (j > 1 && j <= galleryData.nrOfPages) {
         visiblePages[i] = j;
@@ -109,50 +105,49 @@ let showPages = (visiblePages) => {
   }
 }
 
-let addDots = (visiblePages,galleryData) => {
+let addDots = (visiblePages, galleryData) => {
   $('.pagination-dots').find('.interactiveElement').each(function() {
     $(this).remove();
   });
   let id = $(".pagination-active").attr('id').substring(1, 2);
-  if (id - 1 > 3 && galleryData.nrOfPages>5) {
+  if (id - 1 > 3 && galleryData.nrOfPages > 5) {
     $(".pagination-dots").append('<p class="interactiveElement">...</p>');
   }
 }
 
-let switchPage = (galleryData) => {
+let switchPage = (galleryData, currentPage) => {
   $(document).on('click', '.pageNr', function(e) {
     let id = e.currentTarget.attributes.id.textContent;
-    let currentPage = id.substring(1, 2);
+    currentPage = id.substring(1, 2);
     refreshAll(currentPage, galleryData);
     return false;
   });
-}
-
-let nextPrevious = (currentPage, galleryData) => {
-  $(document).on('click', '.pagination-previous', function() {
-    if (currentPage > 1) {
-      currentPage = currentPage - 1;
-      refreshAll(currentPage, galleryData);
-      return false;
-    } else {
-      if (currentPage == 1) {
-        currentPage = galleryData.nrOfPages
+    $(document).on('click', '.pagination-previous', function() {
+      if (currentPage > 1) {
+        currentPage = Number(currentPage) - 1;
         refreshAll(currentPage, galleryData);
+        return false;
+      } else {
+        if (currentPage == 1) {
+          currentPage = galleryData.nrOfPages
+          refreshAll(currentPage, galleryData);
+          return false;
+        }
       }
-    }
-  });
-  $(document).on('click', '.pagination-next', function() {
-    if (currentPage < galleryData.nrOfPages) {
-      currentPage = currentPage + 1;
-      refreshAll(currentPage, galleryData);
-      return false;
-    } else {
-      if (currentPage == galleryData.nrOfPages) {
-        currentPage = 1
+    });
+    $(document).on('click', '.pagination-next', function() {
+      if (currentPage < galleryData.nrOfPages) {
+        currentPage = Number(currentPage) + 1;
         refreshAll(currentPage, galleryData);
+        return false;
+      } else {
+        if (currentPage == galleryData.nrOfPages) {
+          currentPage = 1
+          refreshAll(currentPage, galleryData);
+          return false;
+        }
       }
-    }
-  });
+    });
 }
 
 let refreshAll = (currentPage, galleryData, ) => {
@@ -160,6 +155,6 @@ let refreshAll = (currentPage, galleryData, ) => {
   clearGallery();
   showPages(visiblePages);
   activePageToggle(currentPage);
-  addDots(visiblePages,galleryData);
+  addDots(visiblePages, galleryData);
   showGalleryOfSelectedPage(currentPage, galleryData);
 }
