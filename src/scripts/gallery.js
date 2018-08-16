@@ -1,12 +1,19 @@
 const socket = io();
+  let galleryData ={};
 socket.on('init', function(data) {
-  const galleryData = getData(data);
+  galleryData = getData(data);
   let currentPage = 1;
   let visiblePages = generatePages(currentPage, galleryData);
   paginationInit(galleryData);
   showPages(visiblePages);
   activePageToggle(currentPage);
   showGalleryOfSelectedPage(currentPage, galleryData);
+  $(document).on('click', '.pageNr', function(e) {
+    socket.emit('switch');
+  })
+  });
+socket.on('switchres', function(data,currentPage) {
+  galleryData = getData(data);
   switchPage(galleryData, currentPage);
 });
 

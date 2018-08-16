@@ -8,6 +8,10 @@ const io = require('socket.io')(http);
 const imagesOnPage = 10;
 const port = 3000;
 
+  let imageList = [];
+  let nrOfImages = 0;
+  let nrOfPages = 0;
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 })
@@ -20,23 +24,65 @@ http.listen(port, function() {
 });
 
 let createGallery = (socket) => {
-  let imageList = [];
-  let nrOfImages = 0;
-  let nrOfPages = 0;
   fs.readdir(dir, (err, files) => {
     files.forEach(file => {
       imageList.push(file);
     });
     nrOfImages = files.length;
     nrOfPages = Math.ceil(nrOfImages / 10);
+    console.log('Update: '+nrOfImages);
   })
-  io.sockets.on('connection', function(socket) {
+  io.on('connection', function(socket) {
+    console.log('Users connected: %s', io.engine.clientsCount);
     socket.emit('init', {
       imageList: imageList,
       nrOfPages: nrOfPages,
       nrOfImages: nrOfImages,
     });
+    socket.on('disconnect', function() {
+      console.log('User disconnected');
+      console.log('Users connected: %s', io.engine.clientsCount);
+    });
+    socket.on('switch', function(socket) {
+      fs.readdir(dir, (err, files) => {
+        files.forEach(file => {
+          imageList.push(file);
+        });
+        nrOfImages = files.length;
+        nrOfPages = Math.ceil(nrOfImages / 10);
+        console.log('Update: '+nrOfImages);
+      })
+      io.sockets.emit('switchres', {
+        imageList: imageList,
+        nrOfPages: nrOfPages,
+        nrOfImages: nrOfImages,
+      });
+      console.log("message: wysłano Init'a");
+    });
   });
+
+  /*io.on('connection', function(socket) {
+    socket.on('switch', function(socket) {
+      console.log('switched')
+      socket.emit('init', {
+        imageList: imageList,
+        nrOfPages: nrOfPages,
+        nrOfImages: nrOfImages,
+      });
+    });
+    console.log('Users connected: %s', io.engine.clientsCount);
+    socket.emit('init', {
+      imageList: imageList,
+      nrOfPages: nrOfPages,
+      nrOfImages: nrOfImages,
+    });
+    socket.on('disconnect', function() {
+      console.log('User disconnected');
+      console.log('Users connected: %s', io.engine.clientsCount);
+    });
+  });*/
+
+
 }
 
 createGallery();
