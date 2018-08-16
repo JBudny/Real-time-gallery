@@ -1,10 +1,11 @@
 const socket = io();
 let galleryData = {};
 let id = '';
+let currentPage = 1;
+let test = 0;
+
 socket.on('init', function(data) {
-  console.log(data);
   galleryData = getData(data);
-  let currentPage = 1;
   let visiblePages = generatePages(currentPage, galleryData);
   paginationInit(galleryData);
   showPages(visiblePages);
@@ -13,17 +14,55 @@ socket.on('init', function(data) {
 });
 
 $(document).on('click', '.pageNr', function(e) {
+  test = 0;
   id = e.currentTarget.attributes.id.textContent;
+  currentPage = id.substring(1, 2);
   socket.emit('switch');
-  console.log('-----zapytanie-----');
+  console.log('-----request-----');
+});
+
+$(document).on('click', '.pagination-previous', function(e) {
+  test = 1;
+  id = $('.pagination-active').attr('id');
+  currentPage = id.substring(1, 2);
+  socket.emit('switch');
+  console.log('-----request-----');
+});
+
+$(document).on('click', '.pagination-next', function() {
+  test = 2;
+  id = $('.pagination-active').attr('id');
+  currentPage = id.substring(1, 2);
+  socket.emit('switch');
+  console.log('-----request-----');
 });
 
 socket.on('switched', function(data, currentPage) {
   galleryData = getData(data);
-  console.log('odpowiedz: '+galleryData.nrOfImages+'images | '+galleryData.nrOfPages+'pages');
-  switchPage(galleryData, currentPage);
+  console.log('response: ' + galleryData.nrOfImages + 'images | ' + galleryData.nrOfPages + 'pages');
+  currentPage = id.substring(1, 2);
+  if (test == 1) {
+    if (currentPage > 1) {
+      currentPage = Number(currentPage) - 1;
+    } else {
+      if (currentPage == 1) {
+        currentPage = galleryData.nrOfPages;
+      }
+    }
+  }
+  if (test == 2) {
+    if (currentPage < galleryData.nrOfPages) {
+      currentPage = Number(currentPage) + 1;
+    } else {
+      if (currentPage == galleryData.nrOfPages) {
+        currentPage = 1
+      }
+    }
+  }
+  refreshAll(currentPage, galleryData);
   console.log('-----page switched-----');
 });
+
 
 let getData = (data) => {
   return dane = {
@@ -110,7 +149,6 @@ let generatePages = (currentPage, galleryData) => {
   }
 }
 
-
 let showPages = (visiblePages) => {
   $('.pagination-interactive').find('.interactiveElement').each(function() {
     $(this).remove();
@@ -130,43 +168,7 @@ let addDots = (visiblePages, galleryData) => {
   }
 }
 
-let switchPage = (galleryData, currentPage) => {
-  //$(document).on('click', '.pageNr', function(e) {
-    //let id = e.currentTarget.attributes.id.textContent;
-    currentPage = id.substring(1, 2);
-    refreshAll(currentPage, galleryData);
-    return false;
-  //});
-  /*
-  $(document).on('click', '.pagination-previous', function() {
-    if (currentPage > 1) {
-      currentPage = Number(currentPage) - 1;
-      refreshAll(currentPage, galleryData);
-      return false;
-    } else {
-      if (currentPage == 1) {
-        currentPage = galleryData.nrOfPages
-        refreshAll(currentPage, galleryData);
-        return false;
-      }
-    }
-  });
-  $(document).on('click', '.pagination-next', function() {
-    if (currentPage < galleryData.nrOfPages) {
-      currentPage = Number(currentPage) + 1;
-      refreshAll(currentPage, galleryData);
-      return false;
-    } else {
-      if (currentPage == galleryData.nrOfPages) {
-        currentPage = 1
-        refreshAll(currentPage, galleryData);
-        return false;
-      }
-    }
-  });*/
-}
-
-let refreshAll = (currentPage, galleryData, ) => {
+let refreshAll = (currentPage, galleryData) => {
   let visiblePages = generatePages(currentPage, galleryData);
   clearGallery();
   showPages(visiblePages);
