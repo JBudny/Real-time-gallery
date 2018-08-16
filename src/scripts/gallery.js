@@ -1,6 +1,8 @@
 const socket = io();
-  let galleryData ={};
+let galleryData = {};
+let id = '';
 socket.on('init', function(data) {
+  console.log(data);
   galleryData = getData(data);
   let currentPage = 1;
   let visiblePages = generatePages(currentPage, galleryData);
@@ -8,13 +10,19 @@ socket.on('init', function(data) {
   showPages(visiblePages);
   activePageToggle(currentPage);
   showGalleryOfSelectedPage(currentPage, galleryData);
-  $(document).on('click', '.pageNr', function(e) {
-    socket.emit('switch');
-  })
-  });
-socket.on('switchres', function(data,currentPage) {
+});
+
+$(document).on('click', '.pageNr', function(e) {
+  id = e.currentTarget.attributes.id.textContent;
+  socket.emit('switch');
+  console.log('-----zapytanie-----');
+});
+
+socket.on('switched', function(data, currentPage) {
   galleryData = getData(data);
+  console.log('odpowiedz: '+galleryData.nrOfImages+'images | '+galleryData.nrOfPages+'pages');
   switchPage(galleryData, currentPage);
+  console.log('-----page switched-----');
 });
 
 let getData = (data) => {
@@ -123,38 +131,39 @@ let addDots = (visiblePages, galleryData) => {
 }
 
 let switchPage = (galleryData, currentPage) => {
-  $(document).on('click', '.pageNr', function(e) {
-    let id = e.currentTarget.attributes.id.textContent;
+  //$(document).on('click', '.pageNr', function(e) {
+    //let id = e.currentTarget.attributes.id.textContent;
     currentPage = id.substring(1, 2);
     refreshAll(currentPage, galleryData);
     return false;
+  //});
+  /*
+  $(document).on('click', '.pagination-previous', function() {
+    if (currentPage > 1) {
+      currentPage = Number(currentPage) - 1;
+      refreshAll(currentPage, galleryData);
+      return false;
+    } else {
+      if (currentPage == 1) {
+        currentPage = galleryData.nrOfPages
+        refreshAll(currentPage, galleryData);
+        return false;
+      }
+    }
   });
-    $(document).on('click', '.pagination-previous', function() {
-      if (currentPage > 1) {
-        currentPage = Number(currentPage) - 1;
+  $(document).on('click', '.pagination-next', function() {
+    if (currentPage < galleryData.nrOfPages) {
+      currentPage = Number(currentPage) + 1;
+      refreshAll(currentPage, galleryData);
+      return false;
+    } else {
+      if (currentPage == galleryData.nrOfPages) {
+        currentPage = 1
         refreshAll(currentPage, galleryData);
         return false;
-      } else {
-        if (currentPage == 1) {
-          currentPage = galleryData.nrOfPages
-          refreshAll(currentPage, galleryData);
-          return false;
-        }
       }
-    });
-    $(document).on('click', '.pagination-next', function() {
-      if (currentPage < galleryData.nrOfPages) {
-        currentPage = Number(currentPage) + 1;
-        refreshAll(currentPage, galleryData);
-        return false;
-      } else {
-        if (currentPage == galleryData.nrOfPages) {
-          currentPage = 1
-          refreshAll(currentPage, galleryData);
-          return false;
-        }
-      }
-    });
+    }
+  });*/
 }
 
 let refreshAll = (currentPage, galleryData, ) => {
