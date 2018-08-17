@@ -1,10 +1,14 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const fs = require('file-system');
 const dir = './public/assets/images';
 const $ = require('jQuery');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const chokidar = require('chokidar');
+const watcher = chokidar.watch('./public/assets/images/', {
+  persistent: true
+});
 const imagesOnPage = 10;
 const port = 3000;
 let nrOfImages = 0;
@@ -60,3 +64,18 @@ let sendGalleryData = (socket) => {
 }
 
 sendGalleryData();
+
+
+watcher
+  .on('add', function(path) {
+    loadImagesData();
+  })
+  .on('change', function(path) {
+    loadImagesData();
+  })
+  .on('unlink', function(path) {
+    loadImagesData();
+  })
+  .on('error', function(error) {
+    loadImagesData();
+  })
