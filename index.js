@@ -21,7 +21,8 @@ const allowedExtensions = [
 './public/assets/images/*.dib'
 ]
 const watcher = chokidar.watch(allowedExtensions, {
-  persistent: true
+  persistent: true,
+  ignoreInitial:true
 });
 const imagesOnPage = 10;
 const port = 3000;
@@ -54,9 +55,8 @@ let loadImagesData = () => {
       nrOfPages: nrOfPages,
       nrOfImages: nrOfImages
     }
-    if (emitSwitched) {
-      io.sockets.emit('switched', data);
-    }
+      io.sockets.emit('galleryUpdated', data);
+      console.log('updated');
   });
 };
 
@@ -70,15 +70,10 @@ let sendGalleryData = (socket) => {
       console.log('User disconnected');
       console.log('Users connected: %s', io.engine.clientsCount);
     });
-    socket.on('switch', function(socket) {
-      emitSwitched = true;
-      loadImagesData();
-    });
   });
 }
 
 sendGalleryData();
-
 
 watcher
   .on('add', function(path) {
