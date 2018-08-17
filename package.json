@@ -22,9 +22,14 @@
   },
   "homepage": "https://github.com/Jbudny/Grid-gallery#readme",
   "dependencies": {
+    "chokidar": "^2.0.4",
     "express": "^4.16.3",
     "file-system": "^2.2.2",
     "jquery": "^3.3.1",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "watch-sync": "^0.3.1"
+  },
+  "devDependencies": {
+    "watch": "^1.0.2"
   }
 }
