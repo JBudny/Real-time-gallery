@@ -6,7 +6,21 @@ const $ = require('jQuery');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const chokidar = require('chokidar');
-const watcher = chokidar.watch('./public/assets/images/', {
+const allowedExtensions = [
+'./public/assets/images/*.jpeg',
+'./public/assets/images/*.jpg',
+'./public/assets/images/*.jpe',
+'./public/assets/images/*.jif',
+'./public/assets/images/*.jfif',
+'./public/assets/images/*.jfi',
+'./public/assets/images/*.png',
+'./public/assets/images/*.gif',
+'./public/assets/images/*.bmp',
+'./public/assets/images/*.svg',
+'./public/assets/images/*.ico',
+'./public/assets/images/*.dib'
+]
+const watcher = chokidar.watch(allowedExtensions, {
   persistent: true,
   ignoreInitial:true
 });
