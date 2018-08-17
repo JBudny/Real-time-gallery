@@ -1,35 +1,32 @@
 {
-  "name": "grid-gallery",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jbudny/Grid-gallery.git"
-  },
-  "keywords": [
-    "grid",
-    "gallery",
-    "jbudny"
-  ],
-  "author": "JBudny",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Jbudny/Grid-gallery/issues"
-  },
-  "homepage": "https://github.com/Jbudny/Grid-gallery#readme",
-  "dependencies": {
-    "chokidar": "^2.0.4",
-    "express": "^4.16.3",
-    "file-system": "^2.2.2",
-    "jquery": "^3.3.1",
-    "socket.io": "^2.1.1",
-    "watch-sync": "^0.3.1"
-  },
-  "devDependencies": {
-    "watch": "^1.0.2"
-  }
+    "name": "gallery",
+    "version": "1.0.0",
+    "description": "Responsive image gallery that can load images from server, divide them into the subpages and serve fully-functional pagination menu. All that in real-time!",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Jbudny/Gallery.git"
+    },
+    "keywords": [
+        "real-time",
+        "grid",
+        "gallery",
+        "jbudny"
+    ],
+    "author": "JBudny",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Jbudny/Gallery/issues"
+    },
+    "homepage": "https://github.com/Jbudny/Gallery#readme",
+    "dependencies": {
+        "chokidar": "^2.0.4",
+        "express": "^4.16.3",
+        "file-system": "^2.2.2",
+        "jquery": "^3.3.1",
+        "socket.io": "^2.1.1"
+    }
 }

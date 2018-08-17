@@ -17,14 +17,11 @@ All that in real-time!
 
 ## Dependencies
 
-    "chokidar": "^2.0.4",
-    "express": "^4.16.3",
-    "file-system": "^2.2.2",
-    "jquery": "^3.3.1",
-    "socket.io": "^2.1.1",
-    "watch-sync": "^0.3.1"
-    "watch": "^1.0.2"
-
+        "chokidar": "^2.0.4",
+        "express": "^4.16.3",
+        "file-system": "^2.2.2",
+        "jquery": "^3.3.1",
+        "socket.io": "^2.1.1"
 
 ## Getting Started
 
