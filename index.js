@@ -41,7 +41,8 @@ let loadImagesData = () => {
       nrOfImages: nrOfImages
     }
     if (emitSwitched) {
-      io.sockets.emit('switched', data);
+      io.sockets.emit('galleryUpdated', data);
+      console.log('updated');
     }
   });
 };
