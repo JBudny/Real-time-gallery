@@ -7,22 +7,23 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const chokidar = require('chokidar');
 const allowedExtensions = [
-'./public/assets/images/*.jpeg',
-'./public/assets/images/*.jpg',
-'./public/assets/images/*.jpe',
-'./public/assets/images/*.jif',
-'./public/assets/images/*.jfif',
-'./public/assets/images/*.jfi',
-'./public/assets/images/*.png',
-'./public/assets/images/*.gif',
-'./public/assets/images/*.bmp',
-'./public/assets/images/*.svg',
-'./public/assets/images/*.ico',
-'./public/assets/images/*.dib'
+  './public/assets/images/*.jpeg',
+  './public/assets/images/*.jpg',
+  './public/assets/images/*.jpe',
+  './public/assets/images/*.jif',
+  './public/assets/images/*.jfif',
+  './public/assets/images/*.jfi',
+  './public/assets/images/*.png',
+  './public/assets/images/*.gif',
+  './public/assets/images/*.bmp',
+  './public/assets/images/*.svg',
+  './public/assets/images/*.ico',
+  './public/assets/images/*.dib'
 ]
 const watcher = chokidar.watch(allowedExtensions, {
+  ignored: 'public\/assets\/images\/nowy folder',
   persistent: true,
-  ignoreInitial:true
+  ignoreInitial: true
 });
 const imagesOnPage = 10;
 const port = 3000;
@@ -48,15 +49,18 @@ let loadImagesData = () => {
     files.forEach(file => {
       imageList.push(file);
     });
-    nrOfImages = files.length;
+
+    imageList = imageList.filter(item => (/\.png$/g).test(item));
+    nrOfImages = imageList.length;
     nrOfPages = Math.ceil(nrOfImages / 10);
     data = {
       imageList: imageList,
       nrOfPages: nrOfPages,
       nrOfImages: nrOfImages
     }
-      io.sockets.emit('galleryUpdated', data);
-      console.log('updated');
+    io.sockets.emit('galleryUpdated', data);
+    console.log('updated');
+    console.log(data);
   });
 };
 
