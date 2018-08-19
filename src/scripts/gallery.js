@@ -118,7 +118,7 @@ let showGalleryOfSelectedPage = (currentPage, galleryData) => {
   let counter = 0;
   while (counter < 10) {
     if (imageIndex < galleryData.nrOfImages) {
-      $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
+      $(".gallery").append('<figure class="card"><img class="card-image" src="gallery/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
       imageIndex++;
       counter++;
     } else {
