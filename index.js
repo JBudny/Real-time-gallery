@@ -21,7 +21,6 @@ const allowedExtensions = [
   './public/assets/images/*.dib'
 ]
 const watcher = chokidar.watch(allowedExtensions, {
-  ignored: 'public\/assets\/images\/nowy folder',
   persistent: true,
   ignoreInitial: true
 });
@@ -50,7 +49,7 @@ let loadImagesData = () => {
       imageList.push(file);
     });
 
-    imageList = imageList.filter(item => (/\.png$/g).test(item));
+    imageList = imageList.filter(item => (/\....$/g).test(item));
     nrOfImages = imageList.length;
     nrOfPages = Math.ceil(nrOfImages / 10);
     data = {
@@ -59,8 +58,6 @@ let loadImagesData = () => {
       nrOfImages: nrOfImages
     }
     io.sockets.emit('galleryUpdated', data);
-    console.log('updated');
-    console.log(data);
   });
 };
 

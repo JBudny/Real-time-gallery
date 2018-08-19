@@ -1,42 +1,46 @@
 const socket = io();
 let galleryData = {};
-let id = '';
 let currentPage = 1;
 
 socket.on('init', function(data) {
   galleryData = data;
-  let visiblePages = generatePages(currentPage, galleryData);
-  paginationInit(galleryData);
-  showPages(visiblePages);
-  activePageToggle(currentPage);
-  showGalleryOfSelectedPage(currentPage, galleryData);
-  showNrOfPages(galleryData);
+  showPaginationNavigation(galleryData);
+  if (galleryData.nrOfPages > 0) {
+    let visiblePages = generatePages(currentPage, galleryData);
+    showPaginationPages(visiblePages);
+    paginationActivePageToggle(currentPage);
+    showGalleryOfSelectedPage(currentPage, galleryData);
+    showNrOfPages(galleryData);
+  } else {
+    $('.empty').show();
+    $('.pagination').hide();
+    currentPage = 1;
+  }
 });
 
 $(document).on('click', '.pageNr', function(e) {
-  id = e.currentTarget.attributes.id.textContent;
-  currentPage = id.substring(1, 2);
+  currentPage = e.currentTarget.attributes.id.textContent;
   refreshAll(currentPage, galleryData);
 });
 
 $(document).on('click', '.pagination-previous', function(e) {
-  id = $('.pagination-active').attr('id');
-  currentPage = id.substring(1, 2);
+  currentPage = $('.pagination-active').attr('id');
   currentPage = paginationPrevious(currentPage);
   refreshAll(currentPage, galleryData);
 });
 
 $(document).on('click', '.pagination-next', function() {
-  id = $('.pagination-active').attr('id');
-  currentPage = id.substring(1, 2);
+  currentPage = $('.pagination-active').attr('id');
   currentPage = paginationNext(currentPage);
   refreshAll(currentPage, galleryData);
 });
 
-socket.on('galleryUpdated', function(data, currentPage) {
+socket.on('galleryUpdated', function(data) {
+  currentPage = $('.pagination-active').attr('id');
   galleryData = data;
-  id = $('.pagination-active').attr('id');
-  currentPage = id.substring(1, 2);
+  if (typeof currentPage == 'undefined') {
+    currentPage = 1;
+  }
   if (galleryData.nrOfPages < currentPage) {
     currentPage = galleryData.nrOfPages;
   }
@@ -45,38 +49,38 @@ socket.on('galleryUpdated', function(data, currentPage) {
 
 let generatePages = (currentPage, galleryData) => {
   let i = 0;
-  let j = currentPage - 2;
-  let k = Number(currentPage) + 2;
+  let firstPage = currentPage - 2;
   let visiblePages = [];
   if (currentPage < 4) {
-    j = 2;
+    firstPage = 2;
     if (galleryData.nrOfPages >= 5) {
-      for (j; j <= 5; j++) {
-        visiblePages[i] = j;
+      for (firstPage; firstPage <= 5; firstPage++) {
+        visiblePages[i] = firstPage;
         i++
       }
     } else {
-      for (j; j <= galleryData.nrOfPages; j++) {
-        visiblePages[i] = j;
+      for (firstPage; firstPage <= galleryData.nrOfPages; firstPage++) {
+        visiblePages[i] = firstPage;
         i++
       }
     }
     return visiblePages;
   } else if (currentPage > galleryData.nrOfPages - 3) {
     if (galleryData.nrOfPages > 5) {
-      j = galleryData.nrOfPages - 4;
+      firstPage = galleryData.nrOfPages - 4;
     } else {
-      j = 2;
+      firstPage = 2;
     }
-    for (j; j <= galleryData.nrOfPages; j++) {
-      visiblePages[i] = j;
+    for (firstPage; firstPage <= galleryData.nrOfPages; firstPage++) {
+      visiblePages[i] = firstPage;
       i++
     }
     return visiblePages;
   } else {
-    for (j; j <= k; j++) {
-      if (j > 1 && j <= galleryData.nrOfPages) {
-        visiblePages[i] = j;
+    let lastPage = Number(currentPage) + 2;
+    for (firstPage; firstPage <= lastPage; firstPage++) {
+      if (firstPage > 1 && firstPage <= galleryData.nrOfPages) {
+        visiblePages[i] = firstPage;
         i++;
       }
     }
@@ -84,41 +88,41 @@ let generatePages = (currentPage, galleryData) => {
   }
 }
 
-let paginationInit = (galleryData) => {
+let showPaginationNavigation = (galleryData) => {
   $(".pagination").append('<a href="#" class="pagination-previous">&laquo; Previous</a>');
-  $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="p' + 1 + '">' + 1 + '</a>');
+  $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="' + 1 + '">' + 1 + '</a>');
   $(".pagination").append('<div class="pagination-dots"</div>');
   $(".pagination").append('<div class="pagination-interactive"</div>');
   $(".pagination").append('<div class="nrOfPages"></div>');
   $(".pagination").append('<a href="#" class="pagination-next">Next &raquo;</a>');
 }
 
-let showPages = (visiblePages) => {
+let showPaginationPages = (visiblePages) => {
   $('.pagination-interactive').find('.interactiveElement').each(function() {
     $(this).remove();
   });
   for (let i = 0; i <= visiblePages.length - 1; i++) {
-    $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="p' + visiblePages[i] + '">' + visiblePages[i] + '</a>');
+    $(".pagination-interactive").append('<a class="pageNr interactiveElement" aria-label="page ' + visiblePages[i] + '" href="#" id="' + visiblePages[i] + '">' + visiblePages[i] + '</a>');
   }
 }
 
-let activePageToggle = (id) => {
+let paginationActivePageToggle = (currentPage) => {
   $('.pagination').find('a').each(function() {
     $(this).removeClass('pagination-active');
   })
-  $('#p' + id).toggleClass('pagination-active');
+  $('#' + currentPage).toggleClass('pagination-active');
 }
 
 let showGalleryOfSelectedPage = (currentPage, galleryData) => {
-  let i = (currentPage * 10) - 10;
-  let c = 0;
-  while (c < 10) {
-    if (i < galleryData.nrOfImages) {
-      $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + galleryData.imageList[i] + '" alt="Image: ' + i + '"><figcaption class="card-caption">' + galleryData.imageList[i] + '</figcaption></figure>');
-      i++;
-      c++;
+  let imageIndex = (currentPage * 10) - 10;
+  let counter = 0;
+  while (counter < 10) {
+    if (imageIndex < galleryData.nrOfImages) {
+      $(".gallery").append('<figure class="card"><img class="card-image" src="static/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
+      imageIndex++;
+      counter++;
     } else {
-      c = 10;
+      counter = 10;
     }
   }
 }
@@ -164,8 +168,8 @@ let addDots = (visiblePages, galleryData) => {
   $('.pagination-dots').find('.interactiveElement').each(function() {
     $(this).remove();
   });
-  let id = $(".pagination-active").attr('id').substring(1, 2);
-  if (id - 1 > 3 && galleryData.nrOfPages > 5) {
+  currentPage = $(".pagination-active").attr('id');
+  if (currentPage - 1 > 3 && galleryData.nrOfPages > 5) {
     $(".pagination-dots").append('<p class="interactiveElement">...</p>');
   }
 }
@@ -173,9 +177,16 @@ let addDots = (visiblePages, galleryData) => {
 let refreshAll = (currentPage, galleryData) => {
   let visiblePages = generatePages(currentPage, galleryData);
   clearGallery();
-  showPages(visiblePages);
-  activePageToggle(currentPage);
-  addDots(visiblePages, galleryData);
-  showGalleryOfSelectedPage(currentPage, galleryData);
-  showNrOfPages(galleryData);
+  if (galleryData.nrOfPages > 0) {
+    $('.empty').hide();
+    $('.pagination').show();
+    showPaginationPages(visiblePages);
+    paginationActivePageToggle(currentPage);
+    addDots(visiblePages, galleryData);
+    showGalleryOfSelectedPage(currentPage, galleryData);
+    showNrOfPages(galleryData);
+  } else {
+    $('.empty').show();
+    $('.pagination').hide();
+  }
 }

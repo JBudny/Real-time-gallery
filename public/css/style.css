@@ -26,14 +26,29 @@
 
 .page-header {
   grid-area: header;
-  font-size: 1.9em;
+  font-size: 2.2em;
   line-height: 2em;
+  font-weight: bold;
 }
 
 .container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.empty {
+  position: absolute;
+  display: none;
+  width: 90%;
+  padding: 30px;
+  margin: 10px auto;
+  text-align: center;
+  color: rgba(222, 222, 222, 0.5);
+  font-weight: bold;
+  font-size: 22px;
+  background-color: #252525;
 }
 
 .gallery {
@@ -118,26 +133,28 @@
 }
 
 .page-footer>a {
-  margin-left:5px;
+  margin-left: 5px;
   color: #dedede;
   font-weight: bold;
   transition: 0.3s;
 }
 
-.page-footer>a:hover{
+.page-footer>a:hover {
   color: white;
 }
 
 @media only screen and (max-width:768px) {
   .gallery {
     display: flex;
-    flex-direction:column;/*
-    grid-template-rows: repeat(10, 200px);
-    grid-template-columns: 1fr;
-    grid-template-areas: "card";*/
+    flex-direction: column;
   }
   .wrapper {
     height: 100%;
     width: 100%;
+  }
+  .empty {
+    top: 0;
+    font-size: 15px;
+    padding: 15px;
   }
 }
