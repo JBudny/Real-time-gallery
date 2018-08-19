@@ -25,7 +25,7 @@ const watcher = chokidar.watch(allowedExtensions, {
   ignoreInitial: true
 });
 const imagesOnPage = 10;
-const port = 3000;
+const port = 80;
 let nrOfImages = 0;
 let nrOfPages = 0;
 let emitSwitched = false;
@@ -34,11 +34,11 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 })
 app.use('/static/', express.static(__dirname + '/public/css'))
-  .use('/static/', express.static(__dirname + '/public/assets/images'))
+  .use('/gallery/', express.static(__dirname + '/public/assets/images'))
   .use('/js/', express.static(__dirname + '/src/scripts'))
 
 http.listen(port, function() {
-  console.log('listening on *:3000');
+  console.log('listening on '+port);
 });
 
 let data = {};
@@ -76,16 +76,32 @@ let sendGalleryData = (socket) => {
 
 sendGalleryData();
 
+let sendUpdatedData = (data) => {
+  io.sockets.emit('galleryUpdated', data);
+}
+
 watcher
   .on('add', function(path) {
-    loadImagesData();
+    let newFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
+    let newIndex = data.imageList.length;
+    data.imageList[newIndex] = newFile;
+    data.nrOfImages = data.imageList.length;
+    data.nrOfPages = Math.ceil(data.nrOfImages / 10);
+    sendUpdatedData(data);
   })
   .on('change', function(path) {
-    loadImagesData();
+    console.log('File '+path+' has been changed');
+    io.sockets.emit('galleryUpdated', data);
   })
   .on('unlink', function(path) {
-    loadImagesData();
+    let unlinkedFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
+    let unlinkedIndex = data.imageList.indexOf(unlinkedFile);
+    data.imageList.splice(unlinkedIndex,1);
+    data.nrOfImages = data.imageList.length;
+    data.nrOfPages = Math.ceil(data.nrOfImages / 10);
+    sendUpdatedData(data);
   })
   .on('error', function(error) {
+    console.log('error');
     loadImagesData();
   })
