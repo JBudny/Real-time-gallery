@@ -25,7 +25,7 @@ const watcher = chokidar.watch(allowedExtensions, {
   ignoreInitial: true
 });
 const imagesOnPage = 10;
-const port = 80;
+const port = 3000;
 let nrOfImages = 0;
 let nrOfPages = 0;
 let emitSwitched = false;
