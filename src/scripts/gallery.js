@@ -18,6 +18,10 @@ socket.on('init', function(data) {
   }
 });
 
+$(document).ready(function() {
+  $('.modal-background').hide();
+})
+
 $(document).on('click', '.pageNr', function(e) {
   currentPage = e.currentTarget.attributes.id.textContent;
   refreshAll(currentPage, galleryData);
@@ -37,27 +41,25 @@ $(document).on('click', '.pagination-next', function() {
 
 $(document).on('click', '.modal-close', function() {
   if (window.matchMedia("(min-width: 768px)").matches) {
-      $('.modal').hide();
-      $('.modal-background').hide();
-}
+    $('.modal-content').hide();
+    $('.modal-background').hide();
+  }
 })
 
 $(document).on('click', '.modal-background', function() {
   if (window.matchMedia("(min-width: 768px)").matches) {
-    $('.modal').hide();
+    $('.modal-content').hide();
     $('.modal-background').hide();
-}
+  }
 })
 
-$(document).on('click', '.card', function(){
+$(document).on('click', '.card', function() {
   if (window.matchMedia("(min-width: 768px)").matches) {
-  console.log($(".modal-image>img"));
-  $('.modal-background').show();
-    $('.modal-image>img').attr('src','gallery/'+this.id);
-    console.log($('.modal-image>figcaption'));
-    $('.modal-image>figcaption>p').replaceWith('<p>'+this.id+'</p>');
-    $('.modal').show();
-}
+    $('.modal-background').css('display', 'flex');
+    $('.modal-image>img').attr('src', 'gallery/' + this.id);
+    $('.modal-image>figcaption>p').replaceWith('<p>' + this.id + '</p>');
+    $('.modal-content').show();
+  }
 })
 
 socket.on('galleryUpdated', function(data) {
@@ -143,7 +145,12 @@ let showGalleryOfSelectedPage = (currentPage, galleryData) => {
   let counter = 0;
   while (counter < 10) {
     if (imageIndex < galleryData.nrOfImages) {
-      $(".gallery").append('<figure class="card" id="'+galleryData.imageList[imageIndex]+'"><img class="card-image" src="gallery/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption" id="'+galleryData.imageList[imageIndex]+'">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
+      $(".gallery").append('<figure class="card" id="' + galleryData.imageList[imageIndex] + '"><img class="card-image" src="gallery/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption" id="' + galleryData.imageList[imageIndex] + '">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
+
+      /*  let nameLength = galleryData.imageList[imageIndex].length;
+        let imageName = galleryData.imageList[imageIndex].substring(0,nameLength-4);
+        $(".gallery").append('<figure class="card" id="'+imageName+'"><img class="card-image" alt="Image index: ' + imageIndex + '"><figcaption class="card-caption">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
+        $('#'+imageName+'>img').css('background-image', 'url(gallery/'+galleryData.imageList[imageIndex]+')');*/
       imageIndex++;
       counter++;
     } else {
