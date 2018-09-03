@@ -1,16 +1,21 @@
 const socket = io();
-let galleryData = {};
+let imageList = [];
 let currentPage = 1;
+let imagesPerPage = 0;
+let nrOfPages = 0;
+let nrOfImages = 0;
 
 socket.on('init', function(data) {
-  galleryData = data;
-  showPaginationNavigation(galleryData);
-  if (galleryData.nrOfPages > 0) {
-    let visiblePages = generatePages(currentPage, galleryData);
+  imageList = data;
+  nrOfImages = imageList.length;
+  nrOfPages = howMuchPages(imageList);
+  showPaginationNavigation(imageList);
+  if (nrOfPages > 0) {
+    let visiblePages = generatePages(currentPage, imageList);
     showPaginationPages(visiblePages);
     paginationActivePageToggle(currentPage);
-    showGalleryOfSelectedPage(currentPage, galleryData);
-    showNrOfPages(galleryData);
+    showGalleryOfSelectedPage(currentPage, imageList);
+    showNrOfPages(imageList);
   } else {
     $('.empty').show();
     $('.pagination').hide();
@@ -20,85 +25,91 @@ socket.on('init', function(data) {
 
 $(document).ready(function() {
   $('.modal-background').hide();
+  $('.modal-content').hide();
 })
 
 $(document).on('click', '.pageNr', function(e) {
   currentPage = e.currentTarget.attributes.id.textContent;
-  refreshAll(currentPage, galleryData);
+  refreshAll(currentPage, imageList);
 });
 
 $(document).on('click', '.pagination-previous', function(e) {
   currentPage = $('.pagination-active').attr('id');
   currentPage = paginationPrevious(currentPage);
-  refreshAll(currentPage, galleryData);
+  refreshAll(currentPage, imageList);
 });
 
 $(document).on('click', '.pagination-next', function() {
   currentPage = $('.pagination-active').attr('id');
   currentPage = paginationNext(currentPage);
-  refreshAll(currentPage, galleryData);
+  refreshAll(currentPage, imageList);
 });
 
 $(document).on('click', '.modal-close', function() {
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    $('.modal-content').hide();
-    $('.modal-background').hide();
-  }
+  $('.modal-content').hide();
+  $('.modal-background').hide();
 })
 
 $(document).on('click', '.modal-background', function() {
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    $('.modal-content').hide();
-    $('.modal-background').hide();
-  }
+  $('.modal-content').hide();
+  $('.modal-background').hide();
 })
 
 $(document).on('click', '.card', function() {
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    $('.modal-background').css('display', 'flex');
-    $('.modal-image>img').attr('src', 'gallery/' + this.id);
-    $('.modal-image>figcaption>p').replaceWith('<p>' + this.id + '</p>');
-    $('.modal-content').show();
-  }
+  $('.modal-background').css('display', 'flex');
+  $('.modal-image>img').attr('src', 'gallery/' + this.id);
+  $('.modal-image>figcaption>p').replaceWith('<p>' + this.id + '</p>');
+  $('.modal-content').show();
 })
 
 socket.on('galleryUpdated', function(data) {
+  nrOfPages = howMuchPages(data);
   currentPage = $('.pagination-active').attr('id');
-  galleryData = data;
+  imageList = data;
   if (typeof currentPage == 'undefined') {
     currentPage = 1;
   }
-  if (galleryData.nrOfPages < currentPage) {
-    currentPage = galleryData.nrOfPages;
+  if (nrOfPages < currentPage) {
+    currentPage = nrOfPages;
   }
-  refreshAll(currentPage, galleryData);
+  refreshAll(currentPage, imageList);
 });
 
-let generatePages = (currentPage, galleryData) => {
+let howMuchPages = (imageList) => {
+  if (window.matchMedia("only screen and (min-width: 1024px) and (max-width: 1366px) and (-webkit-min-device-pixel-ratio: 1.5)").matches) {
+    imagesPerPage = 9;
+    return Math.ceil(nrOfImages / 9);
+  } else {
+    imagesPerPage = 10;
+    return Math.ceil(nrOfImages / 10);
+  }
+}
+
+let generatePages = (currentPage, imageList) => {
   let i = 0;
   let firstPage = currentPage - 2;
   let visiblePages = [];
   if (currentPage < 4) {
     firstPage = 2;
-    if (galleryData.nrOfPages >= 5) {
+    if (nrOfPages >= 5) {
       for (firstPage; firstPage <= 5; firstPage++) {
         visiblePages[i] = firstPage;
         i++
       }
     } else {
-      for (firstPage; firstPage <= galleryData.nrOfPages; firstPage++) {
+      for (firstPage; firstPage <= nrOfPages; firstPage++) {
         visiblePages[i] = firstPage;
         i++
       }
     }
     return visiblePages;
-  } else if (currentPage > galleryData.nrOfPages - 3) {
-    if (galleryData.nrOfPages > 5) {
-      firstPage = galleryData.nrOfPages - 4;
+  } else if (currentPage > nrOfPages - 3) {
+    if (nrOfPages > 5) {
+      firstPage = nrOfPages - 4;
     } else {
       firstPage = 2;
     }
-    for (firstPage; firstPage <= galleryData.nrOfPages; firstPage++) {
+    for (firstPage; firstPage <= nrOfPages; firstPage++) {
       visiblePages[i] = firstPage;
       i++
     }
@@ -106,7 +117,7 @@ let generatePages = (currentPage, galleryData) => {
   } else {
     let lastPage = Number(currentPage) + 2;
     for (firstPage; firstPage <= lastPage; firstPage++) {
-      if (firstPage > 1 && firstPage <= galleryData.nrOfPages) {
+      if (firstPage > 1 && firstPage <= nrOfPages) {
         visiblePages[i] = firstPage;
         i++;
       }
@@ -115,7 +126,7 @@ let generatePages = (currentPage, galleryData) => {
   }
 }
 
-let showPaginationNavigation = (galleryData) => {
+let showPaginationNavigation = (imageList) => {
   $(".pagination").append('<a href="#" class="pagination-previous">&laquo; Previous</a>');
   $(".pagination").append('<a class="pageNr" aria-label="page ' + 1 + '" href="#" id="' + 1 + '">' + 1 + '</a>');
   $(".pagination").append('<div class="pagination-dots"</div>');
@@ -140,17 +151,12 @@ let paginationActivePageToggle = (currentPage) => {
   $('#' + currentPage).toggleClass('pagination-active');
 }
 
-let showGalleryOfSelectedPage = (currentPage, galleryData) => {
-  let imageIndex = (currentPage * 10) - 10;
+let showGalleryOfSelectedPage = (currentPage, imageList) => {
+  let imageIndex = (currentPage * imagesPerPage) - imagesPerPage;
   let counter = 0;
-  while (counter < 10) {
-    if (imageIndex < galleryData.nrOfImages) {
-      $(".gallery").append('<figure class="card" id="' + galleryData.imageList[imageIndex] + '"><img class="card-image" src="gallery/' + galleryData.imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption" id="' + galleryData.imageList[imageIndex] + '">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
-
-      /*  let nameLength = galleryData.imageList[imageIndex].length;
-        let imageName = galleryData.imageList[imageIndex].substring(0,nameLength-4);
-        $(".gallery").append('<figure class="card" id="'+imageName+'"><img class="card-image" alt="Image index: ' + imageIndex + '"><figcaption class="card-caption">' + galleryData.imageList[imageIndex] + '</figcaption></figure>');
-        $('#'+imageName+'>img').css('background-image', 'url(gallery/'+galleryData.imageList[imageIndex]+')');*/
+  while (counter < imagesPerPage) {
+    if (imageIndex < nrOfImages) {
+      $(".gallery").append('<figure class="card" id="' + imageList[imageIndex] + '"><img class="card-image" src="gallery/' + imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption" id="' + imageList[imageIndex] + '">' + imageList[imageIndex] + '</figcaption></figure>');
       imageIndex++;
       counter++;
     } else {
@@ -159,11 +165,11 @@ let showGalleryOfSelectedPage = (currentPage, galleryData) => {
   }
 }
 
-let showNrOfPages = (galleryData) => {
+let showNrOfPages = (imageList) => {
   $('.nrOfPages').find('p').each(function() {
     $(this).remove();
   });
-  $(".nrOfPages").append('<p>of ' + galleryData.nrOfPages + '</p>');
+  $(".nrOfPages").append('<p>of ' + nrOfPages + '</p>');
 }
 
 let paginationPrevious = (currentPage) => {
@@ -172,18 +178,18 @@ let paginationPrevious = (currentPage) => {
     return currentPage;
   } else {
     if (currentPage <= 1) {
-      currentPage = galleryData.nrOfPages;
+      currentPage = nrOfPages;
       return currentPage;
     }
   }
 }
 
 let paginationNext = (currentPage) => {
-  if (currentPage < galleryData.nrOfPages) {
+  if (currentPage < nrOfPages) {
     currentPage = Number(currentPage) + 1;
     return currentPage;
   } else {
-    if (currentPage >= galleryData.nrOfPages) {
+    if (currentPage >= nrOfPages) {
       currentPage = 1;
       return currentPage;
     }
@@ -196,27 +202,27 @@ let clearGallery = () => {
   });
 }
 
-let addDots = (visiblePages, galleryData) => {
+let addDots = (visiblePages, imageList) => {
   $('.pagination-dots').find('.interactiveElement').each(function() {
     $(this).remove();
   });
   currentPage = $(".pagination-active").attr('id');
-  if (currentPage - 1 > 3 && galleryData.nrOfPages > 5) {
+  if (currentPage - 1 > 3 && nrOfPages > 5) {
     $(".pagination-dots").append('<p class="interactiveElement">...</p>');
   }
 }
 
-let refreshAll = (currentPage, galleryData) => {
-  let visiblePages = generatePages(currentPage, galleryData);
+let refreshAll = (currentPage, imageList) => {
+  let visiblePages = generatePages(currentPage, imageList);
   clearGallery();
-  if (galleryData.nrOfPages > 0) {
+  if (nrOfPages > 0) {
     $('.empty').hide();
     $('.pagination').show();
     showPaginationPages(visiblePages);
     paginationActivePageToggle(currentPage);
-    addDots(visiblePages, galleryData);
-    showGalleryOfSelectedPage(currentPage, galleryData);
-    showNrOfPages(galleryData);
+    addDots(visiblePages, imageList);
+    showGalleryOfSelectedPage(currentPage, imageList);
+    showNrOfPages(imageList);
   } else {
     $('.empty').show();
     $('.pagination').hide();

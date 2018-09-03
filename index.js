@@ -25,9 +25,7 @@ const watcher = chokidar.watch(allowedExtensions, {
   ignoreInitial: true
 });
 const imagesOnPage = 10;
-const port = 3000;
-let nrOfImages = 0;
-let nrOfPages = 0;
+const port = 80;
 let emitSwitched = false;
 
 app.get('/', (req, res) => {
@@ -42,23 +40,14 @@ http.listen(port, function() {
   console.log('listening on '+port);
 });
 
-let data = {};
+let imageList = [];
 let loadImagesData = () => {
   fs.readdir(dir, (err, files) => {
-    let imageList = [];
     files.forEach(file => {
       imageList.push(file);
     });
-
     imageList = imageList.filter(item => (/\....$/g).test(item));
-    nrOfImages = imageList.length;
-    nrOfPages = Math.ceil(nrOfImages / 10);
-    data = {
-      imageList: imageList,
-      nrOfPages: nrOfPages,
-      nrOfImages: nrOfImages
-    }
-    io.sockets.emit('galleryUpdated', data);
+    io.sockets.emit('galleryUpdated', imageList);
   });
 };
 
@@ -67,7 +56,7 @@ let sendGalleryData = (socket) => {
   loadImagesData();
   io.on('connection', function(socket) {
     console.log('Users connected: %s', io.engine.clientsCount);
-    socket.emit('init', data);
+    socket.emit('init', imageList);
     socket.on('disconnect', function() {
       console.log('User disconnected');
       console.log('Users connected: %s', io.engine.clientsCount);
@@ -77,31 +66,27 @@ let sendGalleryData = (socket) => {
 
 sendGalleryData();
 
-let sendUpdatedData = (data) => {
-  io.sockets.emit('galleryUpdated', data);
+let sendUpdatedData = (imageList) => {
+  io.sockets.emit('galleryUpdated', imageList);
 }
 
 watcher
   .on('add', function(path) {
     let newFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
-    let newIndex = data.imageList.length;
-    data.imageList[newIndex] = newFile;
-    data.nrOfImages = data.imageList.length;
-    data.nrOfPages = Math.ceil(data.nrOfImages / 10);
-    sendUpdatedData(data);
+    let newIndex = imageList.length;
+    imageList[newIndex] = newFile;
+    sendUpdatedData(imageList);
       console.log('File '+path+' has been changed');
   })
   .on('change', function(path) {
     console.log('File '+path+' has been changed');
-    io.sockets.emit('galleryUpdated', data);
+    io.sockets.emit('galleryUpdated', imageList);
   })
   .on('unlink', function(path) {
     let unlinkedFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
-    let unlinkedIndex = data.imageList.indexOf(unlinkedFile);
-    data.imageList.splice(unlinkedIndex,1);
-    data.nrOfImages = data.imageList.length;
-    data.nrOfPages = Math.ceil(data.nrOfImages / 10);
-    sendUpdatedData(data);
+    let unlinkedIndex = imageList.indexOf(unlinkedFile);
+    imageList.splice(unlinkedIndex,1);
+    sendUpdatedData(imageList);
   })
   .on('error', function(error) {
     console.log('error');
