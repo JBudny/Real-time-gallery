@@ -47,6 +47,12 @@ Address and port of the started server:
 localhost:3000
 ```
 
+### How to use
+
+1. Go to the ```./public/assets/images/gallery``` catalog.  
+2. Try to manipulate files.  
+Gallery shoud display your changes in real time.
+
 ## License
 
 This project is licensed under the MIT License
