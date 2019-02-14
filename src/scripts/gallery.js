@@ -78,10 +78,10 @@ socket.on('galleryUpdated', function(data) {
 let howMuchPages = (imageList) => {
   if (window.matchMedia("only screen and (min-width: 1024px) and (max-width: 1366px) and (-webkit-min-device-pixel-ratio: 1.5)").matches) {
     imagesPerPage = 9;
-    return Math.ceil(nrOfImages / 9);
+    return Math.ceil(imageList.length / 9);
   } else {
     imagesPerPage = 10;
-    return Math.ceil(nrOfImages / 10);
+    return Math.ceil(imageList.length / 10);
   }
 }
 
@@ -155,7 +155,7 @@ let showGalleryOfSelectedPage = (currentPage, imageList) => {
   let imageIndex = (currentPage * imagesPerPage) - imagesPerPage;
   let counter = 0;
   while (counter < imagesPerPage) {
-    if (imageIndex < nrOfImages) {
+    if (imageIndex < imageList.length) {
       $(".gallery").append('<figure class="card" id="' + imageList[imageIndex] + '"><img class="card-image" src="gallery/' + imageList[imageIndex] + '" alt="Image: ' + imageIndex + '"><figcaption class="card-caption" id="' + imageList[imageIndex] + '">' + imageList[imageIndex] + '</figcaption></figure>');
       imageIndex++;
       counter++;

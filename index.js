@@ -25,7 +25,7 @@ const watcher = chokidar.watch(allowedExtensions, {
   ignoreInitial: true
 });
 const imagesOnPage = 10;
-const port = 80;
+const port = 3000;
 let emitSwitched = false;
 
 app.get('/', (req, res) => {
@@ -76,10 +76,8 @@ watcher
     let newIndex = imageList.length;
     imageList[newIndex] = newFile;
     sendUpdatedData(imageList);
-      console.log('File '+path+' has been changed');
   })
   .on('change', function(path) {
-    console.log('File '+path+' has been changed');
     io.sockets.emit('galleryUpdated', imageList);
   })
   .on('unlink', function(path) {
