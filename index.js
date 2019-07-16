@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('file-system');
 const dir = './public/assets/images/gallery';
-const $ = require('jQuery');
+const $ = require('jquery');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const chokidar = require('chokidar');
@@ -72,7 +72,7 @@ let sendUpdatedData = (imageList) => {
 
 watcher
   .on('add', function(path) {
-    let newFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
+    let newFile = path.split( /\/|\\/ ).pop();
     let newIndex = imageList.length;
     imageList[newIndex] = newFile;
     sendUpdatedData(imageList);
@@ -81,7 +81,7 @@ watcher
     io.sockets.emit('galleryUpdated', imageList);
   })
   .on('unlink', function(path) {
-    let unlinkedFile = path.substring(path.lastIndexOf("\\") + 1, path.length);
+    let unlinkedFile = path.split( /\/|\\/ ).pop();
     let unlinkedIndex = imageList.indexOf(unlinkedFile);
     imageList.splice(unlinkedIndex,1);
     sendUpdatedData(imageList);

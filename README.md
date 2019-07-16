@@ -24,7 +24,7 @@ Responsive image gallery that can load images from server, divide them into the 
 
 These instructions will get you a copy of the project up and running on your local machine.
 
-### Dependencies nstallation
+### Dependencies installation
 
 Open cmd in the project directory and type:
 ```
